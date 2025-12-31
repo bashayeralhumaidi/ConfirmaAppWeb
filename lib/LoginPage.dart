@@ -30,9 +30,10 @@ class _LoginPageState extends State<LoginPage> {
       error = "";
     });
 
-
 final url = Uri.parse(
-  "https://confirmaapplication-bxfba9gybnyhfvcy.westeurope-01.azurewebsites.net/loginUserAccess");
+  "https://confirmaapplication-bxfba9gybnhyfvcy.azurewebsites.net/loginUserAccess"
+);
+
 
     try {
       final res = await http.post(
@@ -216,8 +217,10 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   Future<void> changePassword() async {
     setState(() { loading = true; error = ""; });
 
+
 final url = Uri.parse(
-  "https://confirmaapplication-bxfba9gybnyhfvcy.westeurope-01.azurewebsites.net/changePassword");
+  "https://confirmaapplication-bxfba9gybnhyfvcy.azurewebsites.net/changePassword"
+);
 
 
     try {
@@ -250,9 +253,10 @@ final url = Uri.parse(
       return;
     }
 
-final url = Uri.parse(
-  "https://confirmaapplication-bxfba9gybnyhfvcy.westeurope-01.azurewebsites.net/requestReset");
 
+final url = Uri.parse(
+  "https://confirmaapplication-bxfba9gybnhyfvcy.azurewebsites.net/requestReset"
+);
 
     await http.post(
       url,
