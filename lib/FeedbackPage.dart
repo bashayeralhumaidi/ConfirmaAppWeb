@@ -28,7 +28,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
   }
 
   Future<void> submitFeedback() async {
-    final url = Uri.parse("http://132.220.216.47:8000/add_feedback");
+    final url = Uri.parse("https://confirmaapplication-bxfba9gybnhyfvcy.westeurope-01.azurewebsites.net/add_feedback");
 
     final payload = {
       "PersonName": personController.text,

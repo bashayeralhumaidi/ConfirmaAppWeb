@@ -131,7 +131,7 @@ Future<void> _loadUser() async {
     List<String> questions, {
     String subCategory = "",
   }) async {
-    final url = Uri.parse("http://132.220.216.47:8000/add_Confirma");
+    final url = Uri.parse("https://confirmaapplication-bxfba9gybnhyfvcy.westeurope-01.azurewebsites.net/add_Confirma");
 
     final filteredRecords = answers.entries
         .where((e) => (e.value["status"] ?? "").toString().isNotEmpty)
@@ -163,7 +163,7 @@ Future<void> _loadUser() async {
   }
 
   Future<bool> checkLastSubmission() async {
-    final url = Uri.parse("http://132.220.216.47:8000/check_last_submission");
+    final url = Uri.parse("https://confirmaapplication-bxfba9gybnhyfvcy.westeurope-01.azurewebsites.net/check_last_submission");
 
     final response = await http.post(
       url,
