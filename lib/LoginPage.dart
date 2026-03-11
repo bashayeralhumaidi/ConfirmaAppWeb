@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'HomePage.dart';
+import 'global.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -30,10 +32,7 @@ class _LoginPageState extends State<LoginPage> {
       error = "";
     });
 
-
-final url = Uri.parse(
-  "https://confirmaapplication-bxfba9gybnhyfvcy.westeurope-01.azurewebsites.net/loginUserAccess"
-);
+    final url = Uri.parse('$apiBase/loginUserAccess');
 
 
 
@@ -49,9 +48,16 @@ final url = Uri.parse(
 
       final data = jsonDecode(res.body);
 
-      if (res.statusCode != 200 || data["success"] != true) {
+      if (res.statusCode == 401) {
+        setState(() => error = "Invalid ID or Password");
+      } else if (res.statusCode != 200 || data["success"] != true) {
         setState(() => error = "Invalid ID or Password");
       } else {
+        // Store token if provided
+        if (data.containsKey('token')) {
+          await secureStorage.write(key: 'auth_token', value: data['token']);
+        }
+
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString("user_id", data["user"]["id"].toString());
         await prefs.setString("user_name", data["user"]["name"]);
@@ -219,23 +225,32 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   Future<void> changePassword() async {
     setState(() { loading = true; error = ""; });
 
-
-
-final url = Uri.parse(
-  "https://confirmaapplication-bxfba9gybnhyfvcy.westeurope-01.azurewebsites.net/changePassword"
-);
-
+    final url = Uri.parse('$apiBase/changePassword');
 
     try {
+      final token = await secureStorage.read(key: 'auth_token');
+      final headers = {"Content-Type": "application/json"};
+      if (token != null) headers['Authorization'] = 'Bearer $token';
+
       final res = await http.post(
         url,
-        headers: {"Content-Type": "application/json"},
+        headers: headers,
         body: jsonEncode({
           "id": id.text.trim(),
           "old_password": oldPass.text.trim(),
           "new_password": newPass.text.trim(),
         }),
       );
+
+      if (res.statusCode == 401) {
+        // Unauthorized -> redirect to login
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const LoginPage()),
+          (route) => false,
+        );
+        return;
+      }
 
       final data = jsonDecode(res.body);
       if (res.statusCode != 200 || data["success"] != true) {
@@ -258,9 +273,7 @@ final url = Uri.parse(
 
 
 
-final url = Uri.parse(
-  "https://confirmaapplication-bxfba9gybnhyfvcy.westeurope-01.azurewebsites.net/requestReset"
-);
+  final url = Uri.parse('$apiBase/requestReset');
 
     await http.post(
       url,
