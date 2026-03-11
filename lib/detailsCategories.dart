@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'HomePage02.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'global.dart';
+import 'LoginPage.dart';
 import 'SafetyPage.dart';
 import 'CleanlinessPage.dart';
 import 'summary_local_storage.dart';
@@ -131,7 +133,7 @@ Future<void> _loadUser() async {
     List<String> questions, {
     String subCategory = "",
   }) async {
-    final url = Uri.parse("https://confirmaapplication-bxfba9gybnhyfvcy.westeurope-01.azurewebsites.net/add_Confirma");
+    final url = Uri.parse('$apiBase/add_Confirma');
 
     final filteredRecords = answers.entries
         .where((e) => (e.value["status"] ?? "").toString().isNotEmpty)
@@ -153,26 +155,52 @@ Future<void> _loadUser() async {
 
     if (filteredRecords.isEmpty) return false;
 
+    final token = await secureStorage.read(key: 'auth_token');
+    final headers = {"Content-Type": "application/json"};
+    if (token != null) headers['Authorization'] = 'Bearer $token';
+
     final response = await http.post(
       url,
-      headers: {"Content-Type": "application/json"},
+      headers: headers,
       body: jsonEncode({"records": filteredRecords}),
     );
+
+    if (response.statusCode == 401) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginPage()),
+        (route) => false,
+      );
+      return false;
+    }
 
     return response.statusCode == 200;
   }
 
   Future<bool> checkLastSubmission() async {
-    final url = Uri.parse("https://confirmaapplication-bxfba9gybnhyfvcy.westeurope-01.azurewebsites.net/check_last_submission");
+    final url = Uri.parse('$apiBase/check_last_submission');
+
+    final token = await secureStorage.read(key: 'auth_token');
+    final headers = {"Content-Type": "application/json"};
+    if (token != null) headers['Authorization'] = 'Bearer $token';
 
     final response = await http.post(
       url,
-      headers: {"Content-Type": "application/json"},
+      headers: headers,
       body: jsonEncode({
         "PlantName": plantController.text,
         "DoneBy": doneByController.text,
       }),
     );
+
+    if (response.statusCode == 401) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginPage()),
+        (route) => false,
+      );
+      return false;
+    }
 
     if (response.statusCode != 200) return true;
 
