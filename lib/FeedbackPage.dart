@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'HomePage02.dart';
+import 'global.dart';
+import 'LoginPage.dart';
 
 class FeedbackPage extends StatefulWidget {
   const FeedbackPage({super.key});
@@ -28,7 +30,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
   }
 
   Future<void> submitFeedback() async {
-    final url = Uri.parse("https://confirmaapplication-bxfba9gybnhyfvcy.westeurope-01.azurewebsites.net/add_feedback");
+    final url = Uri.parse('$apiBase/add_feedback');
 
     final payload = {
       "PersonName": personController.text,
@@ -36,11 +38,24 @@ class _FeedbackPageState extends State<FeedbackPage> {
       "FeedbackText": feedbackController.text,
     };
 
-    await http.post(
+    final token = await secureStorage.read(key: 'auth_token');
+    final headers = {"Content-Type": "application/json"};
+    if (token != null) headers['Authorization'] = 'Bearer $token';
+
+    final res = await http.post(
       url,
-      headers: {"Content-Type": "application/json"},
+      headers: headers,
       body: jsonEncode(payload),
     );
+
+    if (res.statusCode == 401) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginPage()),
+        (route) => false,
+      );
+      return;
+    }
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text("Feedback Submitted")),
