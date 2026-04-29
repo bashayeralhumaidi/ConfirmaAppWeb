@@ -54,15 +54,15 @@ class _LoginPageState extends State<LoginPage> {
 
   void _advanceToGemba() {
     setState(() {
-      _showGif = false;
       _showGemba = true;
+      // GIF stays visible — do NOT set _showGif = false
     });
   }
 
   void _closeOverlay() {
     setState(() {
-      _showGif = false;
       _showGemba = false;
+      // GIF stays visible after closing Gemba too
     });
   }
 
