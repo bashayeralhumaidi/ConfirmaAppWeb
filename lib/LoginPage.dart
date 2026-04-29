@@ -28,9 +28,9 @@ class _LoginPageState extends State<LoginPage> {
       passwordController.text.trim().isNotEmpty;
 
   // ── Splash overlay state ──
-  bool _showGif = true;   // GIF layer
+  bool _showGif = false;   // GIF appears after 3 sec delay
   bool _showGemba = false; // Gemba image layer
-  Timer? _autoTimer;
+  Timer? _gifTimer;
 
   @override
   void initState() {
@@ -38,22 +38,21 @@ class _LoginPageState extends State<LoginPage> {
     idController.addListener(() => setState(() {}));
     passwordController.addListener(() => setState(() {}));
 
-    // Auto-advance: after 3 seconds, if user hasn't tapped, show Gemba
-    _autoTimer = Timer(const Duration(seconds: 3), () {
-      if (mounted && _showGif) _advanceToGemba();
+    // Show GIF in bottom-right after 3 seconds
+    _gifTimer = Timer(const Duration(seconds: 3), () {
+      if (mounted) setState(() => _showGif = true);
     });
   }
 
   @override
   void dispose() {
-    _autoTimer?.cancel();
+    _gifTimer?.cancel();
     idController.dispose();
     passwordController.dispose();
     super.dispose();
   }
 
   void _advanceToGemba() {
-    _autoTimer?.cancel();
     setState(() {
       _showGif = false;
       _showGemba = true;
@@ -238,13 +237,17 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
 
-          // ── GIF overlay (tap → show Gemba) ──
+          // ── GIF in bottom-right corner (tap → show Gemba) ──
           if (_showGif)
-            _SplashLayer(
+            Positioned(
+              bottom: 24,
+              right: 24,
               child: GestureDetector(
                 onTap: _advanceToGemba,
                 child: Image.asset(
                   "assets/images/Untitled design-3.gif",
+                  width: 110,
+                  height: 110,
                   fit: BoxFit.contain,
                 ),
               ),
