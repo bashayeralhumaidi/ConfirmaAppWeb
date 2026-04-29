@@ -1,3 +1,4 @@
+for this page 
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -37,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
 
 
     try {
-      final res = await http.post(
+      final res = await [http.post](http://http.post)(
         url,
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
@@ -141,7 +142,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 15),
                 if (error.isNotEmpty)
-                  Text(error, style: const TextStyle(color: Colors.red)),
+                  Text(error, style: const TextStyle(color: [Colors.red](http://Colors.red))),
                 const SizedBox(height: 25),
 
                 if (canLogin)
@@ -228,11 +229,11 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     final url = Uri.parse('$apiBase/changePassword');
 
     try {
-      final token = await secureStorage.read(key: 'auth_token');
+      final token = await [secureStorage.read](http://secureStorage.read)(key: 'auth_token');
       final headers = {"Content-Type": "application/json"};
       if (token != null) headers['Authorization'] = 'Bearer $token';
 
-      final res = await http.post(
+      final res = await [http.post](http://http.post)(
         url,
         headers: headers,
         body: jsonEncode({
@@ -275,7 +276,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
   final url = Uri.parse('$apiBase/requestReset');
 
-    await http.post(
+    await [http.post](http://http.post)(
       url,
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({"id": id.text.trim()}),
@@ -363,7 +364,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
                 const SizedBox(height: 15),
                 if (error.isNotEmpty)
-                  Text(error, style: const TextStyle(color: Colors.red)),
+                  Text(error, style: const TextStyle(color: [Colors.red](http://Colors.red))),
                 const SizedBox(height: 20),
 
                 SizedBox(
@@ -401,3 +402,5 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     );
   }
 }
+I need to have gif the path is : 
+Notes I need the gif show after the login page load within 3sec then when they click on the gif the 03- Gemba iamge will show and they closse it and procees with login
